@@ -1,0 +1,54 @@
+# JetBrains
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+.kotlin/
+
+# Android
+build/
+**/build/
+*.apk
+*.ap_
+*.dex
+*.class
+bin/
+gen/
+local.properties
+.navigation/
+captures/
+.externalNativeBuild/
+.cxx/
+*.keystore
+!debug.keystore
+
+# iOS (Xcode)
+iosApp/iosApp.xcworkspace/
+iosApp/DerivedData/
+iosApp/build/
+iosApp/Build/
+iosApp/Index/
+iosApp/Logs/
+iosApp/TestResults/
+iosApp/*.temp_caseprivileged_test_output
+iosApp/xcuserdata/
+iosApp/xcshareddata/xcschemes/
+!iosApp/xcshareddata/xcschemes/*.xcscheme
+iosApp/xcshareddata/WorkspaceSettings.xcsettings
+iosApp/Config.xcconfig
+
+# Gradle
+.gradle/
+**/build/
+gradle-app.setting
+!gradle-wrapper.jar
+.gradletasknamecache
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project specific
+node_modules/
+.npm/
