@@ -1,0 +1,31 @@
+{
+  "expo": {
+    "name": "CI Cloud Móvil",
+    "slug": "cicloud_movil",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0078D4"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.cicloud.movil"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#0078D4",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "package": "com.cicloud.movil"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}
