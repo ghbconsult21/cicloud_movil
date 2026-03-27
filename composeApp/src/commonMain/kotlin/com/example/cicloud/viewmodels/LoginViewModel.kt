@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.cicloud.GlobalMessageManager
 import com.example.cicloud.models.InstitucionDto
 import com.example.cicloud.models.auth.LoginRequest
 import com.example.cicloud.network.SessionManager
@@ -50,7 +51,8 @@ class LoginViewModel(private val repository: AuthRepository) : ViewModel() {
 
     fun login(usuario: String, clave: String) {
         viewModelScope.launch {
-            uiState = uiState.copy(isLoading = true)
+            // Reiniciamos el estado de éxito y activamos carga
+            uiState = uiState.copy(isLoading = true, loginSuccess = false)
             try {
                 val request = LoginRequest(userName = usuario, password = clave)
                 val response = repository.login(request)
@@ -59,10 +61,23 @@ class LoginViewModel(private val repository: AuthRepository) : ViewModel() {
                     // Guardamos el token en el SessionManager
                     SessionManager.token = response.token
                     uiState = uiState.copy(isLoading = false, loginSuccess = true)
+                } else {
+                    uiState = uiState.copy(isLoading = false)
+                    // Si no hubo excepción pero la respuesta es nula, informamos
+                    if (!GlobalMessageManager.showAlert) {
+                        GlobalMessageManager.show("Error", "No se pudo procesar la respuesta del servidor", "error")
+                    }
                 }
             } catch (e: Exception) {
-                uiState = uiState.copy(isLoading = false)
-                // El error ya es manejado por el Interceptor (GlobalMessageManager)
+                uiState = uiState.copy(isLoading = false, loginSuccess = false)
+                // Si el Interceptor/process() no mostró ya una alerta, la mostramos nosotros
+                if (!GlobalMessageManager.showAlert) {
+                    GlobalMessageManager.show(
+                        "Credenciales Incorrectas", 
+                        e.message ?: "Por favor, verifique su usuario y contraseña", 
+                        "error"
+                    )
+                }
             }
         }
     }
