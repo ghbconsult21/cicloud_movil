@@ -11,36 +11,32 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.painterResource
-import io.ktor.client.request.*
-import com.example.cicloud.models.InstitucionDto
+import com.example.cicloud.network.SessionManager
+import com.example.cicloud.viewmodels.LoginViewModel
+import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreen(onLoginSuccess: () -> Unit) {
+fun LoginScreen(
+    onLoginSuccess: () -> Unit,
+    viewModel: LoginViewModel = koinViewModel()
+) {
+    val uiState = viewModel.uiState
+    
     var usuario by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var selectedOptionText by remember { mutableStateOf("") }
     var expanded by remember { mutableStateOf(false) }
-    
-    var instituciones by remember { mutableStateOf<List<InstitucionDto>>(emptyList()) }
-    var labelText by remember { mutableStateOf("Cargando instituciones...") }
 
-    LaunchedEffect(Unit) {
-        try {
-            val res = httpClient.get(Endpoints.getUrl(Endpoints.INSTITUCION_AUTOCOMPLETE))
-                .process<List<InstitucionDto>>()
-            
-            if (res != null) {
-                instituciones = res
-                labelText = "Seleccione la institución"
-            }
-        } catch (e: Exception) {
-            labelText = "Error al cargar datos"
+    // Observamos el estado de éxito para navegar
+    LaunchedEffect(uiState.loginSuccess) {
+        if (uiState.loginSuccess) {
+            onLoginSuccess()
         }
     }
 
-    val filteredItems = remember(selectedOptionText, instituciones) {
-        instituciones.filter { it.text.contains(selectedOptionText, ignoreCase = true) }
+    val filteredItems = remember(selectedOptionText, uiState.instituciones) {
+        uiState.instituciones.filter { it.text.contains(selectedOptionText, ignoreCase = true) }
     }
 
     Column(
@@ -76,7 +72,7 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
                     selectedOptionText = it
                     expanded = true
                 },
-                label = { Text(labelText) },
+                label = { Text(uiState.labelText) },
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                 colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
                 modifier = Modifier.menuAnchor().fillMaxWidth()
@@ -106,7 +102,8 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
             value = usuario,
             onValueChange = { usuario = it },
             label = { Text("Usuario") },
-            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
+            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+            enabled = !uiState.isLoading
         )
 
         OutlinedTextField(
@@ -114,17 +111,22 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
             onValueChange = { password = it },
             label = { Text("Password") },
             visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp)
+            modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp),
+            enabled = !uiState.isLoading
         )
+
+        if (uiState.isLoading) {
+            CircularProgressIndicator(modifier = Modifier.padding(bottom = 16.dp))
+        }
 
         Button(
             onClick = { 
-                // Simulación de login exitoso por ahora
-                onLoginSuccess()
+                viewModel.login(usuario, password)
             },
+            enabled = !uiState.isLoading && usuario.isNotEmpty() && password.isNotEmpty(),
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Iniciar sesión")
+            Text(if (uiState.isLoading) "Iniciando..." else "Iniciar sesión")
         }
     }
 }

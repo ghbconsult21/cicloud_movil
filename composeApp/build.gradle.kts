@@ -86,6 +86,12 @@ android {
         }
     }
     buildTypes {
+        getByName("debug") {
+            isMinifyEnabled = false
+            isDebuggable = true
+            // Esto ayuda a que el debugger no se pierda con las optimizaciones
+            matchingFallbacks.add("release")
+        }
         getByName("release") {
             isMinifyEnabled = false
         }

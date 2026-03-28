@@ -65,17 +65,25 @@ suspend inline fun <reified T> HttpResponse.process(): T? {
     }
 
     if (responseBody != null) {
-        if (responseBody.showAlert) {
-            val severity = if (responseBody.success) "success" else "warn"
-            GlobalMessageManager.show(
-                responseBody.titleMessage,
-                responseBody.textMessage,
-                severity
-            )
+        val success = responseBody.success
+        val showAlert = responseBody.showAlert
+        val title = responseBody.titleMessage
+        val text = responseBody.textMessage
+
+        // Lógica de alertas estandarizada con el Backend
+        if (showAlert) {
+            val severity = when (title) {
+                "Exito!" -> "success"
+                "Alerta!!" -> "warn"
+                "Error!" -> "error"
+                else -> if (success) "success" else "error"
+            }
+            GlobalMessageManager.show(title, text, severity)
         }
 
-        if (!responseBody.success) {
-            throw Exception(responseBody.textMessage)
+        if (!success) {
+            // Lanzamos excepción para romper el flujo en el ViewModel
+            throw Exception(text)
         }
 
         return responseBody.content
