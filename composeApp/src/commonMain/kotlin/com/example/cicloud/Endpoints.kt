@@ -1,5 +1,7 @@
 package com.example.cicloud
 
+import com.example.cicloud.network.ApiConfig
+
 object Endpoints {
     // Auth
     const val AUTH_WEB = "/api/Auth/web"

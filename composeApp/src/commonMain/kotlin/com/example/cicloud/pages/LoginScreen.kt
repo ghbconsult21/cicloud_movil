@@ -23,7 +23,6 @@ fun LoginScreen(
     onLoginSuccess: () -> Unit,
     viewModel: LoginViewModel = koinViewModel()
 ) {
-
     val uiState = viewModel.uiState
     
     var usuario by remember { mutableStateOf("") }
@@ -31,7 +30,7 @@ fun LoginScreen(
     var selectedOptionText by remember { mutableStateOf("") }
     var expanded by remember { mutableStateOf(false) }
 
-    // Observamos si el login fue exitoso para navegar
+    // Observamos el estado de éxito para navegar
     LaunchedEffect(uiState.loginSuccess) {
         if (uiState.loginSuccess) {
             onLoginSuccess()
@@ -105,7 +104,8 @@ fun LoginScreen(
             value = usuario,
             onValueChange = { usuario = it },
             label = { Text("Usuario") },
-            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
+            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+            enabled = !uiState.isLoading
         )
 
         OutlinedTextField(
@@ -113,7 +113,8 @@ fun LoginScreen(
             onValueChange = { password = it },
             label = { Text("Password") },
             visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp)
+            modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp),
+            enabled = !uiState.isLoading
         )
 
         if (uiState.isLoading) {
@@ -127,7 +128,7 @@ fun LoginScreen(
             enabled = !uiState.isLoading && usuario.isNotEmpty() && password.isNotEmpty(),
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Iniciar sesión")
+            Text(if (uiState.isLoading) "Iniciando..." else "Iniciar sesión")
         }
     }
 }

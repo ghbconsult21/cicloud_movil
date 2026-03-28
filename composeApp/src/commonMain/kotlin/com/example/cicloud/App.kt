@@ -12,7 +12,8 @@ fun App() {
     KoinApplication(application = {
         modules(appModule)
     }) {
-        MaterialTheme {
+        // Usamos nuestro tema personalizado que ya incluye los ColorConstants
+        CicloudTheme {
             Surface(
                 modifier = Modifier.fillMaxSize(),
                 color = MaterialTheme.colorScheme.background

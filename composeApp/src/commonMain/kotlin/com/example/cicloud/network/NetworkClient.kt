@@ -21,15 +21,11 @@ object SessionManager {
     var isLoggedIn by mutableStateOf(false)
 }
 
+/**
+ * Cliente HTTP configurado para ser dinámico.
+ * Los encabezados se evalúan en cada petición.
+ */
 val httpClient = HttpClient {
-    install(DefaultRequest) {
-        header("Content-Type", "application/json")
-        header("Institucion", SessionManager.institucionId.toString())
-        SessionManager.token?.let {
-            header("Authorization", "Bearer $it")
-        }
-    }
-
     install(ContentNegotiation) {
         json(Json {
             ignoreUnknownKeys = true
@@ -38,6 +34,12 @@ val httpClient = HttpClient {
         })
     }
 
+    // Interceptor para encabezados dinámicos (Token e Institución)
+    install(DefaultRequest) {
+        header("Content-Type", "application/json")
+    }
+
+    // Usamos un plugin para inyectar headers en cada request
     install(HttpCallValidator) {
         validateResponse { response ->
             val statusCode = response.status.value
@@ -55,6 +57,15 @@ val httpClient = HttpClient {
             GlobalMessageManager.show("SIN CONEXIÓN", "No podemos conectarnos al servicio", "error")
         }
     }
+}.apply {
+    // Interceptor manual para asegurar que los headers sean siempre los últimos valores de SessionManager
+    plugin(HttpSend).intercept { request ->
+        request.header("Institucion", SessionManager.institucionId.toString())
+        SessionManager.token?.let {
+            request.header("Authorization", "Bearer $it")
+        }
+        execute(request)
+    }
 }
 
 suspend inline fun <reified T> HttpResponse.process(): T? {
@@ -70,7 +81,6 @@ suspend inline fun <reified T> HttpResponse.process(): T? {
         val title = responseBody.titleMessage
         val text = responseBody.textMessage
 
-        // Lógica de alertas estandarizada con el Backend
         if (showAlert) {
             val severity = when (title) {
                 "Exito!" -> "success"
@@ -82,7 +92,6 @@ suspend inline fun <reified T> HttpResponse.process(): T? {
         }
 
         if (!success) {
-            // Lanzamos excepción para romper el flujo en el ViewModel
             throw Exception(text)
         }
 
