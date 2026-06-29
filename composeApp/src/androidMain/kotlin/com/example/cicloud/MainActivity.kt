@@ -11,6 +11,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+        
+        // Inicializamos el contexto para el hardware provider
+        AndroidHardwareManager.context = applicationContext
 
         setContent {
             App()

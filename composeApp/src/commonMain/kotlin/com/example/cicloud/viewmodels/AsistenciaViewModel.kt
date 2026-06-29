@@ -6,7 +6,9 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cicloud.GlobalMessageManager
+import com.example.cicloud.HardwareProvider
 import com.example.cicloud.models.MarcacionDto
+import com.example.cicloud.models.RegistrarMarcacionRequest
 import com.example.cicloud.repository.AsistenciaRepository
 import kotlinx.coroutines.launch
 import kotlinx.datetime.*
@@ -75,7 +77,19 @@ class AsistenciaViewModel(private val repository: AsistenciaRepository) : ViewMo
 
             viewModelScope.launch {
                 uiState = uiState.copy(isLoading = true)
-                val success = repository.registrarMarcacion(proceso, marcacion.id)
+                
+                val location = HardwareProvider.getCurrentLocation()
+                val deviceId = HardwareProvider.getDeviceId()
+                
+                val request = RegistrarMarcacionRequest(
+                    id = marcacion.id,
+                    proceso = proceso,
+                    latitude = location?.latitude?.toString() ?: "",
+                    longitude = location?.longitude?.toString() ?: "",
+                    idCelular = deviceId
+                )
+
+                val success = repository.registrarMarcacion(request)
                 if (success) {
                     loadMarcaciones()
                     GlobalMessageManager.show("Éxito", "Registro realizado correctamente", "success")

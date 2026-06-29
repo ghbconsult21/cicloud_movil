@@ -7,5 +7,6 @@ interface LocationInfo {
 
 expect object HardwareProvider {
     fun getDeviceId(): String
+    fun hasLocationPermission(): Boolean
     suspend fun getCurrentLocation(): LocationInfo?
 }
