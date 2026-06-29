@@ -17,6 +17,8 @@ import androidx.compose.runtime.setValue
 import kotlin.time.TimeSource
 import kotlin.time.Duration.Companion.hours
 
+expect fun HttpClientConfig<*>.configurePlatformEngine()
+
 object SessionManager {
     var token: String? = null
     var institucionId: Int = 0
@@ -56,6 +58,8 @@ object SessionManager {
  * Cliente HTTP configurado para ser dinámico.
  */
 val httpClient = HttpClient {
+    configurePlatformEngine()
+
     install(ContentNegotiation) {
         json(Json {
             ignoreUnknownKeys = true
@@ -88,7 +92,8 @@ val httpClient = HttpClient {
         }
         
         handleResponseExceptionWithRequest { cause, _ ->
-            GlobalMessageManager.show("SIN CONEXIÓN", "No podemos conectarnos al servicio", "error")
+            val technicalError = cause.message ?: "Error desconocido"
+            GlobalMessageManager.show("SIN CONEXIÓN", technicalError, "error")
         }
     }
 }.apply {

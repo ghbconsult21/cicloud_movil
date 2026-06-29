@@ -18,7 +18,9 @@ import androidx.compose.ui.unit.sp
 import com.example.cicloud.GlobalMessageManager
 import com.example.cicloud.HardwareProvider
 import com.example.cicloud.LocationPermissionRequester
+import com.example.cicloud.ColorConstants
 import com.example.cicloud.models.MarcacionDto
+import com.example.cicloud.utils.DateUtils
 import com.example.cicloud.viewmodels.AsistenciaViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -96,7 +98,7 @@ fun MarcacionCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            val fechaDisplay = marcacion.fechaInicio?.substringBefore("T") ?: "N/A"
+            val fechaDisplay = DateUtils.formatIsoDateToDisplay(marcacion.fechaInicio)
             Text(
                 text = "$fechaDisplay - ${marcacion.horarioCodigo ?: "N/A"}",
                 fontWeight = FontWeight.Bold,
@@ -107,8 +109,8 @@ fun MarcacionCard(
             Spacer(modifier = Modifier.height(8.dp))
 
             // Horas Programadas
-            val horaInicio = marcacion.fechaInicio?.substringAfter("T")?.take(5) ?: "--:--"
-            val horaFin = marcacion.fechaFin?.substringAfter("T")?.take(5) ?: "--:--"
+            val horaInicio = DateUtils.formatIsoTimeToDisplay(marcacion.fechaInicio)
+            val horaFin = DateUtils.formatIsoTimeToDisplay(marcacion.fechaFin)
 
             Row(modifier = Modifier.fillMaxWidth()) {
                 TimeInfoColumn(label = "Inicio Programado:", time = horaInicio, modifier = Modifier.weight(1f))
@@ -119,8 +121,8 @@ fun MarcacionCard(
 
             // Horas Registradas
             Row(modifier = Modifier.fillMaxWidth()) {
-                TimeInfoColumn(label = "H. Registro Entrada:", time = marcacion.horaRegistroEntrada ?: "--:--", modifier = Modifier.weight(1f))
-                TimeInfoColumn(label = "H. Registro Salida:", time = marcacion.horaRegistroSalida ?: "--:--", modifier = Modifier.weight(1f))
+                TimeInfoColumn(label = "H. Registro Entrada:", time = DateUtils.formatIsoTimeToDisplay(marcacion.horaRegistroEntrada), modifier = Modifier.weight(1f))
+                TimeInfoColumn(label = "H. Registro Salida:", time = DateUtils.formatIsoTimeToDisplay(marcacion.horaRegistroSalida), modifier = Modifier.weight(1f))
             }
 
             // Botones y Etiquetas según el estado del "proceso"
@@ -157,7 +159,7 @@ fun ActionSection(proceso: Int, onActionClick: (Int) -> Unit) {
             onClick = { onActionClick(2) },
             modifier = Modifier.fillMaxWidth(),
             shape = MaterialTheme.shapes.small,
-            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
+            colors = ButtonDefaults.buttonColors(containerColor = ColorConstants.Warning)
         ) {
             Text("REGISTRAR SALIDA")
         }
