@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cicloud.GlobalMessageManager
+import com.example.cicloud.HardwareProvider
 import com.example.cicloud.models.InstitucionDto
 import com.example.cicloud.models.auth.LoginRequest
 import com.example.cicloud.network.SessionManager
@@ -70,7 +71,13 @@ class LoginViewModel(private val repository: AuthRepository) : ViewModel() {
             // Reiniciamos el estado de éxito y activamos carga
             uiState = uiState.copy(isLoading = true, loginSuccess = false)
             try {
-                val request = LoginRequest(userName = usuario, password = clave)
+                val request = LoginRequest(
+                    userName = usuario,
+                    password = clave,
+                    identificadorCelular = HardwareProvider.getDeviceId(),
+                    modeloCelular = HardwareProvider.getModel(),
+                    marcaCelular = HardwareProvider.getBrand()
+                )
                 val response = repository.login(request)
                 
                 if (response != null) {

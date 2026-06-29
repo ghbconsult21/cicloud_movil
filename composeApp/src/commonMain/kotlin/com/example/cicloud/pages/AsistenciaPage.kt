@@ -121,8 +121,8 @@ fun MarcacionCard(
 
             // Horas Registradas
             Row(modifier = Modifier.fillMaxWidth()) {
-                TimeInfoColumn(label = "H. Registro Entrada:", time = DateUtils.formatIsoTimeToDisplay(marcacion.horaRegistroEntrada), modifier = Modifier.weight(1f))
-                TimeInfoColumn(label = "H. Registro Salida:", time = DateUtils.formatIsoTimeToDisplay(marcacion.horaRegistroSalida), modifier = Modifier.weight(1f))
+                TimeInfoColumn(label = "Registro Entrada:", time = DateUtils.formatIsoTimeToDisplay(marcacion.horaRegistroEntrada), modifier = Modifier.weight(1f))
+                TimeInfoColumn(label = "Registro Salida:", time = DateUtils.formatIsoTimeToDisplay(marcacion.horaRegistroSalida), modifier = Modifier.weight(1f))
             }
 
             // Botones y Etiquetas según el estado del "proceso"

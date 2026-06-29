@@ -96,7 +96,7 @@ fun MainScaffold() {
                     ),
                     title = {
                         Column {
-                            Text("Cicloud - control de asistencia", fontSize = 16.sp)
+                            Text("CICLOUD - REGISTRO MOVIL", fontSize = 16.sp)
                             val displayText = if (SessionManager.userName.isNotEmpty()) {
                                 "$dateString - ${SessionManager.userName}"
                             } else {
@@ -114,23 +114,30 @@ fun MainScaffold() {
                     },
                     actions = {
                         if (showMenuElements) {
-                            IconButton(onClick = {
-                                GlobalMessageManager.showConfirm(
-                                    title = "Confirmar",
-                                    message = "¿Está seguro de cerrar sesión?",
-                                    onConfirm = {
-                                        SessionManager.resetSession()
-                                        navController.navigate(Screen.Login.name) {
-                                            popUpTo(0) { inclusive = true }
+                            FilledIconButton(
+                                onClick = {
+                                    GlobalMessageManager.showConfirm(
+                                        title = "Confirmar",
+                                        message = "¿Está seguro de cerrar sesión?",
+                                        onConfirm = {
+                                            SessionManager.resetSession()
+                                            navController.navigate(Screen.Login.name) {
+                                                popUpTo(0) { inclusive = true }
+                                            }
+                                            GlobalMessageManager.dismiss()
                                         }
-                                        GlobalMessageManager.dismiss()
-                                    }
-                                )
-                            }) {
+                                    )
+                                },
+                                colors = IconButtonDefaults.filledIconButtonColors(
+                                    containerColor = Color(0xFFB71C1C), // Rojo oscuro / Guindo
+                                    contentColor = Color.White
+                                ),
+                                modifier = Modifier.padding(end = 8.dp).size(28.dp) // Tamaño reducido
+                            ) {
                                 Icon(
                                     imageVector = Icons.AutoMirrored.Filled.ExitToApp, 
-                                    contentDescription = "Cerrar Sesión", 
-                                    tint = Color(0xFFFF5252)
+                                    contentDescription = "Cerrar Sesión",
+                                    modifier = Modifier.size(18.dp) // Icono más pequeño acorde al botón
                                 )
                             }
                         }

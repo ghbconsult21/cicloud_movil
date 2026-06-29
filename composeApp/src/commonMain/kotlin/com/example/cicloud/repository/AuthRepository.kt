@@ -20,7 +20,7 @@ class AuthRepository(private val client: HttpClient) {
     }
 
     suspend fun login(request: LoginRequest): LoginResponseDto? {
-        return client.post(Endpoints.getUrl(Endpoints.AUTH_WEB)) {
+        return client.post(Endpoints.getUrl(Endpoints.AUTH_MOBILE)) {
             setBody(request)
         }.process<LoginResponseDto>()
     }

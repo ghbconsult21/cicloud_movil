@@ -17,17 +17,12 @@ fun WelcomeScreen() {
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = "Bienvenido a Cicloud",
+            text = "BIENVENIDO",
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary
         )
         Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = "Sistema de control de asistencia",
-            fontSize = 16.sp,
-            color = MaterialTheme.colorScheme.secondary
-        )
     }
 }
 

@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
 import android.annotation.SuppressLint
+import android.os.Build
 import android.provider.Settings
 import androidx.core.app.ActivityCompat
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -22,6 +23,9 @@ actual object HardwareProvider {
             Settings.Secure.ANDROID_ID
         ) ?: "unknown_android"
     }
+
+    actual fun getBrand(): String = Build.MANUFACTURER
+    actual fun getModel(): String = Build.MODEL
 
     actual fun hasLocationPermission(): Boolean {
         val context = AndroidHardwareManager.context

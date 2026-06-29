@@ -29,15 +29,15 @@ object DateUtils {
     }
 
     /**
-     * Extrae la hora en formato HH:mm:ss de una cadena ISO.
-     * Ejemplo: "2026-06-28T13:00:00" -> "13:00:00"
+     * Extrae la hora en formato HH:mm de una cadena ISO.
+     * Ejemplo: "2026-06-28T13:00:00" -> "13:00"
      */
     fun formatIsoTimeToDisplay(isoString: String?): String {
-        if (isoString.isNullOrBlank()) return "--:--:--"
+        if (isoString.isNullOrBlank()) return "--:--"
         return try {
-            isoString.substringAfter("T").take(8)
+            isoString.substringAfter("T").take(5)
         } catch (e: Exception) {
-            "--:--:--"
+            "--:--"
         }
     }
 }

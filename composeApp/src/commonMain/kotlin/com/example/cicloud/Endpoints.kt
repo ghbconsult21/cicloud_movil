@@ -4,7 +4,7 @@ import com.example.cicloud.network.ApiConfig
 
 object Endpoints {
     // Auth
-    const val AUTH_WEB = "/api/Auth/web"
+    const val AUTH_MOBILE = "/api/Auth/mobile"
     // Listar Registros asistencia
     const val ASISTENCIA_LISTAR = "/api/asistencia/listar-marcaciones"
     const val ASISTENCIA_REGISTRAR = "/api/asistencia/registrar-ingreso"

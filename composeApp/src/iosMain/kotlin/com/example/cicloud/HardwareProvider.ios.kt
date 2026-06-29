@@ -7,6 +7,9 @@ actual object HardwareProvider {
         return UIDevice.currentDevice.identifierForVendor?.UUIDString ?: "unknown_ios"
     }
 
+    actual fun getBrand(): String = "Apple"
+    actual fun getModel(): String = UIDevice.currentDevice.model
+
     actual fun hasLocationPermission(): Boolean {
         // En iOS esto suele manejarse de forma más compleja con CLLocationManager
         // Por ahora retornamos true para no bloquear el flujo
