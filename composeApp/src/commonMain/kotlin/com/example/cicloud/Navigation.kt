@@ -215,7 +215,7 @@ fun MainScaffold() {
                     }
                     composable(Screen.Welcome.name) { WelcomeScreen() }
                     composable(Screen.Reporteria.name) { ReporteriaScreen() }
-                    composable(Screen.Asistencia.name) { AsistenciaScreen() }
+                    composable(Screen.Asistencia.name) { AsistenciaPage() }
                     composable(Screen.Marcacion.name) { MarcacionScreen() }
                     composable(Screen.Vacaciones.name) { VacacionesScreen() }
                 }

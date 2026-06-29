@@ -7,6 +7,7 @@ object Endpoints {
     const val AUTH_WEB = "/api/Auth/web"
     // Listar Registros asistencia
     const val ASISTENCIA_LISTAR = "/api/asistencia/listar-marcaciones"
+    const val ASISTENCIA_REGISTRAR = "/api/asistencia/registrar-ingreso"
 
     // Institución
     const val INSTITUCION_AUTOCOMPLETE = "/api/Institucion/autocomplete"

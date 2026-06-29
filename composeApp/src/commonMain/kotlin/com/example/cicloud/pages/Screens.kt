@@ -39,13 +39,6 @@ fun ReporteriaScreen() {
 }
 
 @Composable
-fun AsistenciaScreen() {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("Vista de Mi Asistencia", fontSize = 20.sp)
-    }
-}
-
-@Composable
 fun MarcacionScreen() {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Text("Vista de Registro de Marcación", fontSize = 20.sp)
