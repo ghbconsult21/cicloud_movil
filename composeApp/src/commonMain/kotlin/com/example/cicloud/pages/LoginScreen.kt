@@ -15,6 +15,7 @@ import com.example.cicloud.Res
 import com.example.cicloud.LogoGhb
 import com.example.cicloud.network.SessionManager
 import com.example.cicloud.viewmodels.LoginViewModel
+import com.example.cicloud.ui.components.CicloudTextField
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -30,7 +31,6 @@ fun LoginScreen(
     var selectedOptionText by remember { mutableStateOf("") }
     var expanded by remember { mutableStateOf(false) }
 
-    // Observamos el estado de éxito para navegar
     LaunchedEffect(uiState.loginSuccess) {
         if (uiState.loginSuccess) {
             onLoginSuccess()
@@ -68,22 +68,24 @@ fun LoginScreen(
             onExpandedChange = { expanded = !expanded },
             modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
         ) {
-            OutlinedTextField(
+            CicloudTextField(
                 value = selectedOptionText,
                 onValueChange = {
                     selectedOptionText = it
-                    expanded = true
+                    expanded = it.isNotEmpty() // Solo expandir si hay texto
+                    viewModel.onSearchQueryChanged(it)
                 },
-                label = { Text(uiState.labelText) },
+                label = uiState.labelText,
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
-                modifier = Modifier.menuAnchor().fillMaxWidth()
+                modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable, true).fillMaxWidth()
             )
 
-            if (filteredItems.isNotEmpty()) {
+            if (expanded && filteredItems.isNotEmpty()) {
                 ExposedDropdownMenu(
                     expanded = expanded,
-                    onDismissRequest = { expanded = false }
+                    onDismissRequest = { expanded = false },
+                    // IMPORTANTE: Para evitar que pierda el foco, nos aseguramos que el TextField
+                    // sea el que maneje el foco y el menú sea solo un popup visual.
                 ) {
                     filteredItems.forEach { item ->
                         DropdownMenuItem(
@@ -100,18 +102,18 @@ fun LoginScreen(
             }
         }
 
-        OutlinedTextField(
+        CicloudTextField(
             value = usuario,
             onValueChange = { usuario = it },
-            label = { Text("Usuario") },
+            label = "Usuario",
             modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
             enabled = !uiState.isLoading
         )
 
-        OutlinedTextField(
+        CicloudTextField(
             value = password,
             onValueChange = { password = it },
-            label = { Text("Password") },
+            label = "Password",
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp),
             enabled = !uiState.isLoading

@@ -14,16 +14,46 @@ import kotlinx.serialization.json.Json
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import kotlin.time.TimeSource
+import kotlin.time.Duration.Companion.hours
 
 object SessionManager {
     var token: String? = null
     var institucionId: Int = 0
+    var userName by mutableStateOf("")
     var isLoggedIn by mutableStateOf(false)
+    
+    // Usamos TimeMark para medir inactividad de forma precisa
+    private var lastActivityMark: TimeSource.Monotonic.ValueTimeMark? = null
+    
+    fun resetSession() {
+        token = null
+        institucionId = 0
+        userName = ""
+        isLoggedIn = false
+        lastActivityMark = null
+    }
+
+    fun updateActivity() {
+        if (isLoggedIn) {
+            lastActivityMark = TimeSource.Monotonic.markNow()
+        }
+    }
+
+    fun checkInactivity(onLogout: () -> Unit) {
+        val mark = lastActivityMark
+        if (isLoggedIn && mark != null) {
+            // Si el tiempo transcurrido es mayor a 1 hora
+            if (mark.elapsedNow() > 1.hours) {
+                resetSession()
+                onLogout()
+            }
+        }
+    }
 }
 
 /**
  * Cliente HTTP configurado para ser dinámico.
- * Los encabezados se evalúan en cada petición.
  */
 val httpClient = HttpClient {
     install(ContentNegotiation) {
@@ -34,19 +64,23 @@ val httpClient = HttpClient {
         })
     }
 
-    // Interceptor para encabezados dinámicos (Token e Institución)
+    install(HttpTimeout) {
+        requestTimeoutMillis = BuildValues.TIMEOUT_SECONDS * 1000
+        connectTimeoutMillis = BuildValues.TIMEOUT_SECONDS * 1000
+        socketTimeoutMillis = BuildValues.TIMEOUT_SECONDS * 1000
+    }
+
     install(DefaultRequest) {
         header("Content-Type", "application/json")
     }
 
-    // Usamos un plugin para inyectar headers en cada request
     install(HttpCallValidator) {
         validateResponse { response ->
             val statusCode = response.status.value
             when (statusCode) {
                 401 -> {
                     GlobalMessageManager.show("SESIÓN INVÁLIDA", "INICIE SESIÓN O INGRESE NUEVAMENTE", "warn")
-                    SessionManager.isLoggedIn = false
+                    SessionManager.resetSession()
                 }
                 403 -> GlobalMessageManager.show("ACCIÓN NO PERMITIDA", "PERMISOS INSUFICIENTES", "error")
                 500 -> GlobalMessageManager.show("ERROR", "Algo salió mal en el servidor", "error")
@@ -58,8 +92,8 @@ val httpClient = HttpClient {
         }
     }
 }.apply {
-    // Interceptor manual para asegurar que los headers sean siempre los últimos valores de SessionManager
     plugin(HttpSend).intercept { request ->
+        SessionManager.updateActivity()
         request.header("Institucion", SessionManager.institucionId.toString())
         SessionManager.token?.let {
             request.header("Authorization", "Bearer $it")

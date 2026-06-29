@@ -10,7 +10,10 @@ import com.example.cicloud.models.InstitucionDto
 import com.example.cicloud.models.auth.LoginRequest
 import com.example.cicloud.network.SessionManager
 import com.example.cicloud.repository.AuthRepository
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 
 data class LoginUiState(
     val instituciones: List<InstitucionDto> = emptyList(),
@@ -24,19 +27,32 @@ class LoginViewModel(private val repository: AuthRepository) : ViewModel() {
     var uiState by mutableStateOf(LoginUiState())
         private set
 
+    private var searchJob: Job? = null
+
     init {
         loadInstituciones()
     }
 
-    private fun loadInstituciones() {
+    /**
+     * Implementa debounce para buscar instituciones solo cuando el usuario deja de escribir.
+     */
+    fun onSearchQueryChanged(query: String) {
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            delay(500.milliseconds) // Espera 500ms tras el último cambio
+            loadInstituciones(query)
+        }
+    }
+
+    private fun loadInstituciones(query: String? = null) {
         viewModelScope.launch {
             uiState = uiState.copy(isLoading = true)
             try {
-                val res = repository.getInstituciones()
+                val res = repository.getInstituciones(query)
                 if (res != null) {
                     uiState = uiState.copy(
                         instituciones = res,
-                        labelText = "Seleccione la institución",
+                        labelText = if (query.isNullOrBlank()) "Seleccione la institución" else "Buscando: $query",
                         isLoading = false
                     )
                 }

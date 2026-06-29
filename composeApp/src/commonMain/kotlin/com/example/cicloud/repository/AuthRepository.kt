@@ -11,9 +11,12 @@ import io.ktor.http.*
 
 class AuthRepository(private val client: HttpClient) {
     
-    suspend fun getInstituciones(): List<InstitucionDto>? {
-        return client.get(Endpoints.getUrl(Endpoints.INSTITUCION_AUTOCOMPLETE))
-            .process<List<InstitucionDto>>()
+    suspend fun getInstituciones(query: String? = null): List<InstitucionDto>? {
+        return client.get(Endpoints.getUrl(Endpoints.INSTITUCION_AUTOCOMPLETE)) {
+            if (!query.isNullOrBlank()) {
+                parameter("term", query)
+            }
+        }.process<List<InstitucionDto>>()
     }
 
     suspend fun login(request: LoginRequest): LoginResponseDto? {

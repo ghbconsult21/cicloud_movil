@@ -59,6 +59,9 @@ kotlin {
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
+
+            // Fecha (Multiplatform Settings eliminado a petición)
+            implementation(libs.kotlinx.datetime)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
@@ -89,7 +92,6 @@ android {
         getByName("debug") {
             isMinifyEnabled = false
             isDebuggable = true
-            // Esto ayuda a que el debugger no se pierda con las optimizaciones
             matchingFallbacks.add("release")
         }
         getByName("release") {
@@ -112,22 +114,20 @@ buildConfig {
     className("BuildValues")
     packageName("com.example.cicloud")
 
-    // Determinar qué archivo usar
     val isRelease = project.gradle.startParameter.taskNames.any { it.contains("release", ignoreCase = true) }
     val envFileName = if (isRelease) "environment.prod.properties" else "environment.dev.properties"
     val envFile = project.rootProject.file(envFileName)
-    
+
     val props = Properties()
     if (envFile.exists()) {
         envFile.inputStream().use { props.load(it) }
     }
 
-    // Leemos la URL del archivo, si no existe o falla, usamos la de producción por defecto
     val url = props.getProperty("BACKEND_URL") ?: "https://cicloudghb.com:8085"
-    
-    println("BUILD_CONFIG: Cargando entorno desde $envFileName - URL: $url")
-
+    val timeout = props.getProperty("TIMEOUT_SECONDS") ?: "30"
     buildConfigField("String", "BACKEND_URL", "\"$url\"")
+    buildConfigField("Long", "TIMEOUT_SECONDS", "${timeout}L")
+    println("--- DEBUG GRADLE: URL: $url ---")
 }
 
 dependencies {
