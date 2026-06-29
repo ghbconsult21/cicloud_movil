@@ -4,6 +4,7 @@ import com.example.cicloud.Endpoints
 import com.example.cicloud.models.MarcacionDto
 import com.example.cicloud.models.RegistrarMarcacionRequest
 import com.example.cicloud.network.process
+import com.example.cicloud.network.processBase
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.http.*
@@ -15,9 +16,13 @@ class AsistenciaRepository(private val client: HttpClient) {
     }
 
     suspend fun registrarMarcacion(request: RegistrarMarcacionRequest): Boolean {
-        return client.post(Endpoints.getUrl(Endpoints.ASISTENCIA_REGISTRAR)) {
-            contentType(ContentType.Application.Json)
-            setBody(request)
-        }.process<String>() != null
+        return try {
+            client.post(Endpoints.getUrl(Endpoints.ASISTENCIA_REGISTRAR)) {
+                contentType(ContentType.Application.Json)
+                setBody(request)
+            }.processBase()
+        } catch (e: Exception) {
+            false
+        }
     }
 }

@@ -30,19 +30,23 @@ class AsistenciaViewModel(private val repository: AsistenciaRepository) : ViewMo
 
     fun loadMarcaciones() {
         viewModelScope.launch {
-            uiState = uiState.copy(isLoading = true, error = null)
-            try {
-                val result = repository.getMarcaciones()
-                uiState = uiState.copy(
-                    marcaciones = result ?: emptyList(),
-                    isLoading = false
-                )
-            } catch (e: Exception) {
-                uiState = uiState.copy(
-                    isLoading = false,
-                    error = e.message ?: "Error desconocido"
-                )
-            }
+            refreshMarcaciones()
+        }
+    }
+
+    private suspend fun refreshMarcaciones() {
+        uiState = uiState.copy(isLoading = true, error = null)
+        try {
+            val result = repository.getMarcaciones()
+            uiState = uiState.copy(
+                marcaciones = result ?: emptyList(),
+                isLoading = false
+            )
+        } catch (e: Exception) {
+            uiState = uiState.copy(
+                isLoading = false,
+                error = e.message ?: "Error desconocido"
+            )
         }
     }
 
@@ -91,10 +95,11 @@ class AsistenciaViewModel(private val repository: AsistenciaRepository) : ViewMo
 
                 val success = repository.registrarMarcacion(request)
                 if (success) {
-                    loadMarcaciones()
-                    GlobalMessageManager.show("Éxito", "Registro realizado correctamente", "success")
+                    // Refrescamos la lista esperando a que termine antes de ocultar el loading
+                    refreshMarcaciones()
+                } else {
+                    uiState = uiState.copy(isLoading = false)
                 }
-                uiState = uiState.copy(isLoading = false)
             }
         } catch (e: Exception) {
             GlobalMessageManager.show("Error", "Error al procesar el registro: ${e.message}", "error")

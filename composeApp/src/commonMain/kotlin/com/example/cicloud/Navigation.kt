@@ -189,7 +189,7 @@ fun MainScaffold() {
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = "Si requiere soporte comunicarse al 987654321",
+                                text = "Si requiere soporte comunicarse al 900734946",
                                 textAlign = TextAlign.Center,
                                 fontSize = 12.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant

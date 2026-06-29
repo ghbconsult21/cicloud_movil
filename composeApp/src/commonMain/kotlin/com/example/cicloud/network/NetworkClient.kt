@@ -2,6 +2,7 @@ package com.example.cicloud.network
 
 import com.example.cicloud.GlobalMessageManager
 import com.example.cicloud.models.GeneralResponse
+import com.example.cicloud.models.BaseResponse
 import com.example.cicloud.BuildValues
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -115,29 +116,45 @@ suspend inline fun <reified T> HttpResponse.process(): T? {
     }
 
     if (responseBody != null) {
-        val success = responseBody.success
-        val showAlert = responseBody.showAlert
-        val title = responseBody.titleMessage
-        val text = responseBody.textMessage
-
-        if (showAlert) {
-            val severity = when (title) {
-                "Exito!" -> "success"
-                "Alerta!!" -> "warn"
-                "Error!" -> "error"
-                else -> if (success) "success" else "error"
-            }
-            GlobalMessageManager.show(title, text, severity)
-        }
-
-        if (!success) {
-            throw Exception(text)
-        }
-
+        handleBaseResponse(responseBody.success, responseBody.showAlert, responseBody.titleMessage, responseBody.textMessage)
         return responseBody.content
     }
     
     return null
+}
+
+/**
+ * Procesa respuestas que no tienen el campo "content" (GeneralResponse simple del backend).
+ */
+suspend fun HttpResponse.processBase(): Boolean {
+    val responseBody = try {
+        this.body<BaseResponse>()
+    } catch (e: Exception) {
+        null
+    }
+
+    if (responseBody != null) {
+        handleBaseResponse(responseBody.success, responseBody.showAlert, responseBody.titleMessage, responseBody.textMessage)
+        return responseBody.success
+    }
+    
+    return false
+}
+
+fun handleBaseResponse(success: Boolean, showAlert: Boolean, title: String, text: String) {
+    if (showAlert) {
+        val severity = when (title) {
+            "Exito!" -> "success"
+            "Alerta!!" -> "warn"
+            "Error!" -> "error"
+            else -> if (success) "success" else "error"
+        }
+        GlobalMessageManager.show(title, text, severity)
+    }
+
+    if (!success) {
+        throw Exception(text)
+    }
 }
 
 object ApiConfig {
