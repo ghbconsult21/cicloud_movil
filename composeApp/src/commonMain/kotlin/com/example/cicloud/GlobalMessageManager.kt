@@ -48,12 +48,12 @@ object GlobalMessageManager {
         }
     }
 
-    fun show(title: String, message: String, severity: String = "info") {
+    fun show(title: String, message: String, severity: String = "info", onConfirm: (() -> Unit)? = null) {
         this.title = title
         this.message = message
         this.severity = severity
         this.isConfirmation = false
-        this.onConfirmAction = null
+        this.onConfirmAction = onConfirm
         this.onCancelAction = null
         this.showAlert = true
     }

@@ -5,3 +5,8 @@ interface Platform {
 }
 
 expect fun getPlatform(): Platform
+
+/**
+ * Cierra la aplicación de forma nativa.
+ */
+expect fun exitApp()

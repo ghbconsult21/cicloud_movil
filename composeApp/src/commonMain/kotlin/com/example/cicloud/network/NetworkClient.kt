@@ -4,6 +4,7 @@ import com.example.cicloud.GlobalMessageManager
 import com.example.cicloud.models.GeneralResponse
 import com.example.cicloud.models.BaseResponse
 import com.example.cicloud.BuildValues
+import com.example.cicloud.utils.exitApp
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.plugins.*
@@ -59,7 +60,9 @@ val httpClient = HttpClient {
         
         handleResponseExceptionWithRequest { cause, _ ->
             val technicalError = cause.message ?: "Error desconocido"
-            GlobalMessageManager.show("SIN CONEXIÓN", technicalError, "error")
+            GlobalMessageManager.show("SIN CONEXIÓN", technicalError, "error") {
+                exitApp()
+            }
         }
     }
 }.apply {

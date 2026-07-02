@@ -333,7 +333,9 @@ fun MainScaffold() {
             confirmButton = {
                 Button(
                     onClick = {
-                        GlobalMessageManager.onConfirmAction?.invoke() ?: GlobalMessageManager.dismiss()
+                        val action = GlobalMessageManager.onConfirmAction
+                        GlobalMessageManager.dismiss()
+                        action?.invoke()
                     },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = GlobalMessageManager.getSeverityColor()
@@ -345,7 +347,9 @@ fun MainScaffold() {
             dismissButton = if (GlobalMessageManager.isConfirmation) {
                 {
                     TextButton(onClick = {
-                        GlobalMessageManager.onCancelAction?.invoke() ?: GlobalMessageManager.dismiss()
+                        val action = GlobalMessageManager.onCancelAction
+                        GlobalMessageManager.dismiss()
+                        action?.invoke()
                     }) {
                         Text("Cancelar")
                     }
