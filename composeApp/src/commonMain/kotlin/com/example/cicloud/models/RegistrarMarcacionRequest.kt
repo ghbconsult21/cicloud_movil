@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class RegistrarMarcacionRequest(
-    val id: Int,
+    val id: Long,
     val proceso: Int,
     val latitude: String,
     val longitude: String,

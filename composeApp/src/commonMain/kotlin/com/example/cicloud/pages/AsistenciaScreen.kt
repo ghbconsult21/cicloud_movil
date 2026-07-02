@@ -125,9 +125,13 @@ fun MarcacionCard(
                 TimeInfoColumn(label = "Registro Salida:", time = DateUtils.formatIsoTimeToDisplay(marcacion.horaRegistroSalida), modifier = Modifier.weight(1f))
             }
 
-            // Botones y Etiquetas según el estado del "proceso"
+            // Botones y Etiquetas
             Spacer(modifier = Modifier.height(12.dp))
-            ActionSection(proceso = marcacion.proceso ?: 0, onActionClick = onActionClick)
+            ActionSection(
+                registraIngreso = marcacion.registraIngreso,
+                registraSalida = marcacion.registraSalida,
+                onActionClick = onActionClick
+            )
 
             marcacion.conceptoAsistencia?.let {
                 Spacer(modifier = Modifier.height(4.dp))
@@ -146,36 +150,32 @@ fun TimeInfoColumn(label: String, time: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun ActionSection(proceso: Int, onActionClick: (Int) -> Unit) {
-    when (proceso) {
-        1 -> Button(
-            onClick = { onActionClick(1) },
-            modifier = Modifier.fillMaxWidth(),
-            shape = MaterialTheme.shapes.small
-        ) {
-            Text("REGISTRAR ENTRADA")
+fun ActionSection(
+    registraIngreso: Boolean,
+    registraSalida: Boolean,
+    onActionClick: (Int) -> Unit
+) {
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        if (registraIngreso) {
+            Button(
+                onClick = { onActionClick(1) },
+                modifier = Modifier.weight(1f),
+                shape = MaterialTheme.shapes.small,
+                contentPadding = PaddingValues(horizontal = 4.dp)
+            ) {
+                Text("REG. ENTRADA", maxLines = 1)
+            }
         }
-        2 -> Button(
-            onClick = { onActionClick(2) },
-            modifier = Modifier.fillMaxWidth(),
-            shape = MaterialTheme.shapes.small,
-            colors = ButtonDefaults.buttonColors(containerColor = ColorConstants.Warning)
-        ) {
-            Text("REGISTRAR SALIDA")
-        }
-        3 -> Surface(
-            modifier = Modifier.fillMaxWidth(),
-            color = ColorConstants.Error,
-            shape = MaterialTheme.shapes.small
-        ) {
-            Text(
-                text = "PROCEDA A REGULARIZAR SU HORA DE INGRESO",
-                color = ColorConstants.OnPrimary,
-                modifier = Modifier.padding(8.dp),
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.labelLarge,
-                fontWeight = FontWeight.Bold
-            )
+        if (registraSalida) {
+            Button(
+                onClick = { onActionClick(2) },
+                modifier = Modifier.weight(1f),
+                shape = MaterialTheme.shapes.small,
+                colors = ButtonDefaults.buttonColors(containerColor = ColorConstants.Warning),
+                contentPadding = PaddingValues(horizontal = 4.dp)
+            ) {
+                Text("REG. SALIDA", maxLines = 1)
+            }
         }
     }
 }

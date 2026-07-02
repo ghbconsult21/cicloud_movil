@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class MarcacionDto(
-    val id: Int,
+    val id: Long,
     val horarioCodigo: String? = null,
     val fechaInicio: String? = null,
     val fechaFin: String? = null,
@@ -15,5 +15,6 @@ data class MarcacionDto(
     val horaCierreInicio: String? = null,
     val horaCierreFin: String? = null,
     val conceptoAsistencia: String? = null,
-    val proceso: Int? = null
+    val registraIngreso: Boolean,
+    val registraSalida: Boolean
 )
