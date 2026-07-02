@@ -54,6 +54,7 @@ kotlin {
 
             // Iconos
             implementation(libs.compose.material.icons)
+            implementation("org.jetbrains.compose.material:material-icons-extended:1.7.3")
 
             // Koin
             implementation(libs.koin.core)

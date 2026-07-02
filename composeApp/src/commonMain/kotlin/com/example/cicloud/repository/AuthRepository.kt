@@ -1,6 +1,6 @@
 package com.example.cicloud.repository
 
-import com.example.cicloud.Endpoints
+import com.example.cicloud.network.Endpoints
 import com.example.cicloud.models.InstitucionDto
 import com.example.cicloud.models.auth.LoginRequest
 import com.example.cicloud.models.auth.LoginResponseDto

@@ -15,6 +15,7 @@ object ColorConstants {
     val Warning = Color(0xFFFF9800) // Para "Alerta!!"
     val Error = Color(0xFFF44336)   // Para "Error!"
     val Info = Color(0xFF2196F3)    // Para mensajes informativos
+    val LogoutRed = Color(0xFFB71C1C) // Rojo oscuro para botones de salida
     
     // Colores de Fondo y Superficie
     val Background = Color(0xFFF5F5F5)

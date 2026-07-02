@@ -8,6 +8,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.tooling.preview.Preview
+import com.example.cicloud.CicloudTheme
 
 @Composable
 fun WelcomeScreen() {
@@ -26,6 +28,19 @@ fun WelcomeScreen() {
     }
 }
 
+@Preview(showBackground = true)
+@Composable
+fun WelcomeScreenPreview() {
+    CicloudTheme {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) {
+            WelcomeScreen()
+        }
+    }
+}
+
 @Composable
 fun ReporteriaScreen() {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -33,10 +48,16 @@ fun ReporteriaScreen() {
     }
 }
 
+@Preview(showBackground = true)
 @Composable
-fun MarcacionScreen() {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("Vista de Registro de Marcación", fontSize = 20.sp)
+fun ReporteriaScreenPreview() {
+    CicloudTheme {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) {
+            ReporteriaScreen()
+        }
     }
 }
 
@@ -44,5 +65,18 @@ fun MarcacionScreen() {
 fun VacacionesScreen() {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Text("Vista de Solicitar Vacaciones", fontSize = 20.sp)
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun VacacionesScreenPreview() {
+    CicloudTheme {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) {
+            VacacionesScreen()
+        }
     }
 }

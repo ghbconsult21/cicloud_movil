@@ -1,8 +1,10 @@
 package com.example.cicloud.repository
 
-import com.example.cicloud.Endpoints
+import com.example.cicloud.network.Endpoints
 import com.example.cicloud.models.MarcacionDto
 import com.example.cicloud.models.RegistrarMarcacionRequest
+import com.example.cicloud.models.HorarioDiaDto
+import com.example.cicloud.models.HorarioRequest
 import com.example.cicloud.network.process
 import com.example.cicloud.network.processBase
 import io.ktor.client.*
@@ -24,5 +26,12 @@ class AsistenciaRepository(private val client: HttpClient) {
         } catch (e: Exception) {
             false
         }
+    }
+
+    suspend fun getMiHorario(year: Int, month: Int): List<HorarioDiaDto>? {
+        return client.post(Endpoints.getUrl(Endpoints.ASISTENCIA_HORARIO)) {
+            contentType(ContentType.Application.Json)
+            setBody(HorarioRequest(anio = year, mes = month))
+        }.process<List<HorarioDiaDto>>()
     }
 }

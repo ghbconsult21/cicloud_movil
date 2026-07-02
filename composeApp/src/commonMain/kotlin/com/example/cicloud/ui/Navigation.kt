@@ -1,4 +1,4 @@
-package com.example.cicloud
+package com.example.cicloud.ui
 
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
@@ -19,6 +19,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.cicloud.ColorConstants
+import com.example.cicloud.GlobalMessageManager
 import com.example.cicloud.network.SessionManager
 import com.example.cicloud.pages.*
 import kotlinx.coroutines.delay
@@ -31,8 +33,8 @@ enum class Screen(val title: String) {
     Login("Login"),
     Welcome("Bienvenido"),
     Reporteria("Reportería"),
-    Asistencia("Mi Asistencia"),
-    Marcacion("Registro Marcación"),
+    Asistencia("Registrar mi Asistencia"),
+    Horario("Mi Horario"),
     Vacaciones("Solicitar Vacaciones")
 }
 
@@ -114,7 +116,18 @@ fun MainScaffold() {
                     },
                     actions = {
                         if (showMenuElements) {
-                            FilledIconButton(
+                            // Botón de Modo Claro/Oscuro
+                            IconButton(
+                                onClick = { ThemeManager.toggleTheme() }
+                            ) {
+                                Icon(
+                                    imageVector = if (ThemeManager.isDarkMode) Icons.Default.WbSunny else Icons.Default.NightsStay,
+                                    contentDescription = "Cambiar Tema",
+                                    tint = Color.White
+                                )
+                            }
+                            // Botón de Cerrar Sesión (Ahora con el mismo estilo)
+                            IconButton(
                                 onClick = {
                                     GlobalMessageManager.showConfirm(
                                         title = "Confirmar",
@@ -127,17 +140,12 @@ fun MainScaffold() {
                                             GlobalMessageManager.dismiss()
                                         }
                                     )
-                                },
-                                colors = IconButtonDefaults.filledIconButtonColors(
-                                    containerColor = Color(0xFFB71C1C), // Rojo oscuro / Guindo
-                                    contentColor = Color.White
-                                ),
-                                modifier = Modifier.padding(end = 8.dp).size(28.dp) // Tamaño reducido
+                                }
                             ) {
                                 Icon(
                                     imageVector = Icons.AutoMirrored.Filled.ExitToApp, 
                                     contentDescription = "Cerrar Sesión",
-                                    modifier = Modifier.size(18.dp) // Icono más pequeño acorde al botón
+                                    tint = Color.White
                                 )
                             }
                         }
@@ -174,6 +182,12 @@ fun MainScaffold() {
                                     navController.navigate(Screen.Reporteria.name) 
                                 }) {
                                     Text("Reportes", fontSize = 12.sp)
+                                }
+                                TextButton(onClick = { 
+                                    SessionManager.updateActivity()
+                                    navController.navigate(Screen.Horario.name) 
+                                }) {
+                                    Text("Horario", fontSize = 12.sp)
                                 }
                                 TextButton(onClick = { 
                                     SessionManager.updateActivity()
@@ -222,8 +236,8 @@ fun MainScaffold() {
                     }
                     composable(Screen.Welcome.name) { WelcomeScreen() }
                     composable(Screen.Reporteria.name) { ReporteriaScreen() }
-                    composable(Screen.Asistencia.name) { AsistenciaPage() }
-                    composable(Screen.Marcacion.name) { MarcacionScreen() }
+                    composable(Screen.Asistencia.name) { AsistenciaScreen() }
+                    composable(Screen.Horario.name) { HorarioScreen() }
                     composable(Screen.Vacaciones.name) { VacacionesScreen() }
                 }
             }
@@ -248,11 +262,11 @@ fun MainScaffold() {
                         }
                     )
                     NavigationDrawerItem(
-                        label = { Text(Screen.Marcacion.title) },
-                        selected = currentRoute == Screen.Marcacion.name,
+                        label = { Text(Screen.Horario.title) },
+                        selected = currentRoute == Screen.Horario.name,
                         onClick = { 
                             SessionManager.updateActivity()
-                            navController.navigate(Screen.Marcacion.name)
+                            navController.navigate(Screen.Horario.name)
                             scope.launch { drawerState.close() }
                         }
                     )

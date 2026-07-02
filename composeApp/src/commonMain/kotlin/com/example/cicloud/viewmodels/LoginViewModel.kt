@@ -6,7 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cicloud.GlobalMessageManager
-import com.example.cicloud.HardwareProvider
+import com.example.cicloud.utils.HardwareProvider
 import com.example.cicloud.models.InstitucionDto
 import com.example.cicloud.models.auth.LoginRequest
 import com.example.cicloud.network.SessionManager

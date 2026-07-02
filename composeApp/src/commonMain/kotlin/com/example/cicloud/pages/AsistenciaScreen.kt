@@ -16,8 +16,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.cicloud.GlobalMessageManager
-import com.example.cicloud.HardwareProvider
-import com.example.cicloud.LocationPermissionRequester
+import com.example.cicloud.utils.HardwareProvider
+import com.example.cicloud.utils.LocationPermissionRequester
 import com.example.cicloud.ColorConstants
 import com.example.cicloud.models.MarcacionDto
 import com.example.cicloud.utils.DateUtils
@@ -26,7 +26,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AsistenciaPage(
+fun AsistenciaScreen(
     viewModel: AsistenciaViewModel = koinViewModel()
 ) {
     val uiState = viewModel.uiState
@@ -165,12 +165,12 @@ fun ActionSection(proceso: Int, onActionClick: (Int) -> Unit) {
         }
         3 -> Surface(
             modifier = Modifier.fillMaxWidth(),
-            color = Color.Red,
+            color = ColorConstants.Error,
             shape = MaterialTheme.shapes.small
         ) {
             Text(
                 text = "PROCEDA A REGULARIZAR SU HORA DE INGRESO",
-                color = Color.White,
+                color = ColorConstants.OnPrimary,
                 modifier = Modifier.padding(8.dp),
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.labelLarge,

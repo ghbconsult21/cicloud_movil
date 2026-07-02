@@ -1,4 +1,4 @@
-package com.example.cicloud
+package com.example.cicloud.utils
 
 import android.Manifest
 import androidx.activity.compose.rememberLauncherForActivityResult

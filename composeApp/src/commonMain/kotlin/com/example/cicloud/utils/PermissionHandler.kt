@@ -1,4 +1,4 @@
-package com.example.cicloud
+package com.example.cicloud.utils
 
 import androidx.compose.runtime.Composable
 
