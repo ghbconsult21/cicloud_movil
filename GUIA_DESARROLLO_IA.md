@@ -77,3 +77,15 @@ Cuando pidas ayuda a la IA o cuando la IA genere código, asegúrate de:
 
 *   No subir `local.properties` al repositorio.
 *   Usar `environment.dev.properties` para desarrollo y `environment.prod.properties` para producción. Estas configuraciones se inyectan en `BuildValues`.
+
+---
+
+## 7. Configuración de Producción (Release)
+
+*   **applicationId:** El ID oficial para Google Play es `com.ghbconsultoriayservicios.cicloud`.
+*   **Ofuscación (R8/ProGuard):** Para evitar fallos en la serialización JSON tras la ofuscación, todos los modelos deben estar anotados con `@Serializable` y protegidos en `proguard-rules.pro`:
+    ```proguard
+    -keepclassmembers class com.example.cicloud.models.** { *; }
+    -keep @kotlinx.serialization.Serializable class * { *; }
+    ```
+*   **Versiones:** Incrementar `versionCode` y actualizar `versionName` en cada despliegue a la tienda.

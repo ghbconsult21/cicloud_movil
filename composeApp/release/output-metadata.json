@@ -4,7 +4,7 @@
     "type": "APK",
     "kind": "Directory"
   },
-  "applicationId": "com.example.cicloud",
+  "applicationId": "com.ghbconsultoriayservicios.cicloud",
   "variantName": "release",
   "elements": [
     {
