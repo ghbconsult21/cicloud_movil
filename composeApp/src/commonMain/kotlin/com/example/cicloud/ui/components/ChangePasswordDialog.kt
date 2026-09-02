@@ -31,7 +31,7 @@ fun ChangePasswordDialog(
 ) {
     val uiState = viewModel.uiState
 
-    var currentPassword by remember { mutableStateOf(initialOldPassword) }
+    var currentPassword by remember(initialOldPassword) { mutableStateOf(initialOldPassword) }
     var newPassword by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
 

@@ -98,7 +98,9 @@ class LoginViewModel(private val repository: AuthRepository) : ViewModel() {
                     SessionManager.token = response.token
                     SessionManager.userName = usuario
 
-                    if (response.changedPassword == true) {
+                    // Si changePassword/changedPassword viene en 0 o false (o nulo),
+                    // debe mostrarse el modal de cambio de contraseña
+                    if (!response.isPasswordChanged) {
                         uiState = uiState.copy(
                             isLoading = false,
                             requiresPasswordChange = true,
