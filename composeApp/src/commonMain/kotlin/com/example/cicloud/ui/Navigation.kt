@@ -23,6 +23,7 @@ import com.example.cicloud.ColorConstants
 import com.example.cicloud.GlobalMessageManager
 import com.example.cicloud.network.SessionManager
 import com.example.cicloud.pages.*
+import com.example.cicloud.ui.components.ChangePasswordDialog
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.datetime.*
@@ -46,6 +47,7 @@ fun MainScaffold() {
     val scope = rememberCoroutineScope()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+    var showChangePasswordDialog by remember { mutableStateOf(false) }
 
     // Fecha dinámica real usando Clock de kotlin.time
     val dateString = remember {
@@ -123,6 +125,16 @@ fun MainScaffold() {
                                 Icon(
                                     imageVector = if (ThemeManager.isDarkMode) Icons.Default.WbSunny else Icons.Default.NightsStay,
                                     contentDescription = "Cambiar Tema",
+                                    tint = Color.White
+                                )
+                            }
+                            // Botón de Cambiar Contraseña (justo antes de Cerrar Sesión)
+                            IconButton(
+                                onClick = { showChangePasswordDialog = true }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.LockReset,
+                                    contentDescription = "Cambiar Contraseña",
                                     tint = Color.White
                                 )
                             }
@@ -297,6 +309,36 @@ fun MainScaffold() {
                             scope.launch { drawerState.close() }
                         }
                     )
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                    NavigationDrawerItem(
+                        icon = { Icon(Icons.Default.LockReset, contentDescription = null) },
+                        label = { Text("Cambiar Contraseña") },
+                        selected = false,
+                        onClick = { 
+                            SessionManager.updateActivity()
+                            scope.launch { drawerState.close() }
+                            showChangePasswordDialog = true
+                        }
+                    )
+                    NavigationDrawerItem(
+                        icon = { Icon(Icons.AutoMirrored.Filled.ExitToApp, contentDescription = null) },
+                        label = { Text("Cerrar Sesión") },
+                        selected = false,
+                        onClick = { 
+                            scope.launch { drawerState.close() }
+                            GlobalMessageManager.showConfirm(
+                                title = "Confirmar",
+                                message = "¿Está seguro de cerrar sesión?",
+                                onConfirm = {
+                                    SessionManager.resetSession()
+                                    navController.navigate(Screen.Login.name) {
+                                        popUpTo(0) { inclusive = true }
+                                    }
+                                    GlobalMessageManager.dismiss()
+                                }
+                            )
+                        }
+                    )
                 }
             },
             content = { appContent() }
@@ -359,6 +401,21 @@ fun MainScaffold() {
                     }
                 }
             } else null
+        )
+    }
+
+    if (showChangePasswordDialog) {
+        ChangePasswordDialog(
+            isMandatory = false,
+            onDismiss = { showChangePasswordDialog = false },
+            onSuccess = {
+                showChangePasswordDialog = false
+                GlobalMessageManager.show(
+                    title = "Éxito",
+                    message = "Contraseña actualizada correctamente",
+                    severity = "success"
+                )
+            }
         )
     }
 }

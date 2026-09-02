@@ -1,0 +1,42 @@
+---
+description: Reglas de red, Ktor Client, endpoints y comunicación con CicloudBE
+globs: composeApp/src/commonMain/kotlin/**/network/**/*.kt,composeApp/src/commonMain/kotlin/**/repository/**/*.kt
+---
+
+# cicloud_movil — Red, Ktor y Comunicación con el Backend
+
+## 1. Conexión con el Backend (CicloudBE)
+La app móvil consume los servicios expuestos por `CicloudBE`. Para que las llamadas sean válidas en el servidor:
+
+1. **Endpoint de Autenticación**:
+   - `POST /api/Auth/movil` (diseñado específicamente para credenciales y tokens del cliente móvil).
+2. **Cabecera de Multitenencia Obligatoria**:
+   - Toda llamada HTTP debe enviar la cabecera `Institucion: <id_cliente>` para que el backend seleccione la base de datos SQL correspondiente.
+3. **Cabecera de Autenticación**:
+   - Endpoints protegidos requieren `Authorization: Bearer <jwt_token>`.
+
+## 2. Ktor Client y Configuración
+- Centralizar la configuración de Ktor en `NetworkClient.kt` (plugins de ContentNegotiation, Logging, DefaultRequest y Auth).
+- Definir todas las URLs y rutas en `com.example.cicloud.network.Endpoints.kt`. No quemar URLs absolutas dentro de los repositorios.
+- La URL base se inyecta dinámicamente según el entorno:
+  - `environment.dev.properties` para desarrollo local.
+  - `environment.prod.properties` para producción.
+
+## 3. Manejo de Errores en Repositorios
+- Toda llamada HTTP a través de Ktor debe estar encapsulada en bloques `try-catch`:
+  ```kotlin
+  suspend fun registrarMarcacion(request: MarcacionRequest): Result<MarcacionResponse> {
+      return try {
+          val response = httpClient.post(Endpoints.REGISTRAR_MARCACION) {
+              setBody(request)
+          }.body<MarcacionResponse>()
+          Result.success(response)
+      } catch (e: ResponseException) {
+          GlobalMessageManager.showError("Error en el servidor: ${e.response.status.value}")
+          Result.failure(e)
+      } catch (e: Exception) {
+          GlobalMessageManager.showError("Error de conexión: ${e.message}")
+          Result.failure(e)
+      }
+  }
+  ```

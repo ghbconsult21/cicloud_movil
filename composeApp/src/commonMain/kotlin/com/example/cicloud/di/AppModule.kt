@@ -4,6 +4,7 @@ import com.example.cicloud.network.httpClient
 import com.example.cicloud.repository.AsistenciaRepository
 import com.example.cicloud.repository.AuthRepository
 import com.example.cicloud.viewmodels.AsistenciaViewModel
+import com.example.cicloud.viewmodels.ChangePasswordViewModel
 import com.example.cicloud.viewmodels.LoginViewModel
 import com.example.cicloud.viewmodels.HorarioViewModel
 import org.koin.dsl.module
@@ -17,4 +18,5 @@ val appModule = module {
     viewModel { LoginViewModel(get()) }
     viewModel { AsistenciaViewModel(get()) }
     viewModel { HorarioViewModel(get()) }
+    viewModel { ChangePasswordViewModel(get()) }
 }

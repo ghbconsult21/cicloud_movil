@@ -1,0 +1,28 @@
+---
+description: Reglas de Kotlin Multiplatform, Source Sets, R8/ProGuard y Conventional Commits
+globs: **/*.kt,gradle*
+---
+
+# cicloud_movil — Buenas Prácticas Multiplataforma y Despliegue
+
+## 1. División por Source Sets
+- **`commonMain/`**: Aquí debe residir la inmensa mayoría del código (pantallas Compose, ViewModels, Repositorios, Modelos, Ktor).
+- **`androidMain/`**: Exclusivamente para APIs dependientes del SDK de Android (ej. `Context`, servicios en segundo plano de Android, integraciones con Google Play Services).
+- **`iosMain/`**: Exclusivamente para llamadas directas a frameworks de iOS/Apple (ej. CoreCrypto, Keychain nativo).
+- **Patrón `expect` / `actual`**: Utilizar solo cuando sea indispensable una abstracción multiplataforma nativa.
+
+## 2. Null Safety y Buenas Prácticas Kotlin
+- Aprovechar el sistema de tipos de Kotlin. Evitar el operador de aserción no nula (`!!`).
+- Usar llamadas seguras (`?.`), el operador Elvis (`?:`) y funciones de alcance idiomáticas (`let`, `apply`, `also`, `run`).
+- Inmutabilidad por defecto: Usar `val` en lugar de `var` siempre que sea posible.
+
+## 3. Preparación para Producción (Release)
+- **ID de la Aplicación**: `com.ghbcontrolasistencia.cicloud`.
+- **R8 / ProGuard**: Para evitar que la ofuscación rompa la deserialización de JSON, todos los DTOs deben mantener la anotación `@Serializable` de `kotlinx.serialization`.
+- **Archivos Sensibles**: Nunca commitear `local.properties` ni archivos de certificados/keystores privados.
+
+## 4. Convenciones de Commits (Conventional Commits)
+- `feat(modulo): descripción` ➔ Nueva funcionalidad
+- `fix(modulo): descripción` ➔ Corrección de error
+- `refactor(modulo): descripción` ➔ Refactorización sin alterar funcionalidad
+- `chore: descripción` ➔ Mantenimiento, dependencias o configuración Gradle

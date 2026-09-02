@@ -16,6 +16,7 @@ import com.example.cicloud.LogoGhb
 import com.example.cicloud.network.SessionManager
 import com.example.cicloud.viewmodels.LoginViewModel
 import com.example.cicloud.ui.components.CicloudTextField
+import com.example.cicloud.ui.components.ChangePasswordDialog
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -132,5 +133,18 @@ fun LoginScreen(
         ) {
             Text(if (uiState.isLoading) "Iniciando..." else "Iniciar sesión")
         }
+    }
+
+    if (uiState.requiresPasswordChange) {
+        ChangePasswordDialog(
+            isMandatory = true,
+            initialOldPassword = uiState.enteredPassword,
+            onDismiss = {
+                viewModel.onPasswordChangeCancelled()
+            },
+            onSuccess = {
+                viewModel.onPasswordChangeSuccess()
+            }
+        )
     }
 }

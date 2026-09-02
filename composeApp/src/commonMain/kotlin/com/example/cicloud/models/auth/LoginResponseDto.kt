@@ -8,5 +8,5 @@ data class LoginResponseDto(
     val userId: String,
     val personId: Int,
     val rolId: String,
-    val changedPassword: Boolean
+    val changedPassword: Boolean? = false
 )

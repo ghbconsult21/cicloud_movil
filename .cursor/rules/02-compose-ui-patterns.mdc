@@ -1,0 +1,41 @@
+---
+description: Reglas de interfaz de usuario con Compose Multiplatform, temas y recursos
+globs: composeApp/src/commonMain/kotlin/**/pages/**/*.kt,composeApp/src/commonMain/kotlin/**/ui/**/*.kt
+---
+
+# cicloud_movil — Patrones de UI en Compose Multiplatform
+
+## 1. Convenciones de Nomenclatura en Compose
+- **Funciones `@Composable`**: Usar siempre `PascalCase` (ej: `LoginScreen`, `AttendanceCard`, `HeaderToolbar`).
+- **Parámetro Modifier**: El primer parámetro opcional de cualquier función `@Composable` reutilizable **DEBE** ser `modifier: Modifier = Modifier`:
+  ```kotlin
+  @Composable
+  fun PrimaryButton(
+      text: String,
+      onClick: () -> Unit,
+      modifier: Modifier = Modifier,
+      enabled: Boolean = true
+  ) { ... }
+  ```
+
+## 2. Tematización y Colores
+- **PROHIBIDO** hardcodear colores hexadecimales directos en los Composables (ej. `Color(0xFF003366)`).
+- Utilizar siempre:
+  1. La paleta del tema: `MaterialTheme.colorScheme.primary`, `surface`, `onSurface`, etc.
+  2. Las constantes centralizadas: `com.example.cicloud.ColorConstants`.
+- Asegurar compatibilidad con modo claro y oscuro a través de `CicloudTheme`.
+
+## 3. Manejo de Recursos (Compose Multiplatform Resources)
+- **Textos y Cadenas**: Utilizar el sistema de recursos de Compose Multiplatform: `stringResource(Res.string.nombre_recurso)` en lugar de textos quemados en la UI.
+- **Iconos e Imágenes**: Utilizar `painterResource(Res.drawable.nombre_icono)`.
+
+## 4. Mensajes y Notificaciones Globales
+- Para mostrar toasts, diálogos de error, confirmaciones o alertas globales al usuario, usar:
+  ```kotlin
+  GlobalMessageManager.showSuccess("Registro guardado con éxito")
+  GlobalMessageManager.showError("No se pudo conectar con el servidor")
+  ```
+- No implementar alertas modales dispersas o duplicadas si pueden resolverse centralizadamente con `GlobalMessageManager`.
+
+## 5. Previews y Comprobación
+- Crear funciones `@Preview` para pantallas y componentes atómicos principales, facilitando la validación visual en Android Studio o Fleet sin necesidad de compilar la app completa.

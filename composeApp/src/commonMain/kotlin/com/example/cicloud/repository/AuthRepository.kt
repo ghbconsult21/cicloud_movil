@@ -3,6 +3,7 @@ package com.example.cicloud.repository
 import com.example.cicloud.network.Endpoints
 import com.example.cicloud.BuildValues
 import com.example.cicloud.models.InstitucionDto
+import com.example.cicloud.models.auth.ChangePasswordRequest
 import com.example.cicloud.models.auth.LoginRequest
 import com.example.cicloud.models.auth.LoginResponseDto
 import com.example.cicloud.network.process
@@ -30,15 +31,23 @@ class AuthRepository(private val client: HttpClient) {
         }.process<LoginResponseDto>()
     }
 
+    suspend fun cambiarPassword(request: ChangePasswordRequest): Boolean {
+        return client.put(Endpoints.getUrl(Endpoints.CHANGE_PASSWORD)) {
+            setBody(request)
+        }.processBase()
+    }
+
     suspend fun checkVersion(): Boolean {
         try {
             val platformName = getPlatform().name.lowercase()
-            val endpoint = if (platformName.contains("android")) {
-                Endpoints.VERSION_ANDROID
-            } else {
-                Endpoints.VERSION_IOS
+
+            // Desactivar la verificación y alerta de actualización forzada para Android
+            if (platformName.contains("android")) {
+                println("--- DEBUG: Alerta de actualización forzada desactivada para Android ---")
+                return true
             }
 
+            val endpoint = Endpoints.VERSION_IOS
             println("--- DEBUG: Verificando versión en $endpoint ---")
             val res = client.get(Endpoints.getUrl(endpoint)).process<VersionResponse>()
             

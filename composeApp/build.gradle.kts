@@ -143,8 +143,8 @@ buildConfig {
     val timeout = "30"
     buildConfigField("String", "BACKEND_URL", "\"$url\"")
     buildConfigField("Long", "TIMEOUT_SECONDS", "${timeout}L")
-    buildConfigField("String", "VERSION_NAME", "\"1.0.0\"")
-    buildConfigField("Int", "VERSION_CODE", "1")
+    buildConfigField("String", "VERSION_NAME", "\"1.0\"")
+    buildConfigField("Int", "VERSION_CODE", "2")
     println("--- DEBUG GRADLE: URL: $url ---")
 }
 

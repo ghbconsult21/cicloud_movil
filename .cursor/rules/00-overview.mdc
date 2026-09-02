@@ -1,0 +1,57 @@
+---
+description: Visión general, arquitectura y comandos de cicloud_movil (Kotlin Multiplatform / Compose Multiplatform)
+globs: *
+---
+
+# cicloud_movil — Resumen General y Entorno
+
+Este proyecto es la aplicación móvil multiplataforma de **CICLOUD**, construida con **Kotlin Multiplatform (KMP)** y **Compose Multiplatform** para **Android** e **iOS**.
+
+## Pila Tecnológica
+- **Lenguaje**: Kotlin (2.x)
+- **Framework UI**: Compose Multiplatform (Jetpack Compose compartido)
+- **Patrón de Diseño**: MVVM (Model-View-ViewModel) + Repository Pattern
+- **Inyección de Dependencias**: Koin
+- **Cliente HTTP**: Ktor Client con serialización JSON (`kotlinx.serialization`)
+- **Gestor de Mensajes**: `GlobalMessageManager` (alertas y notificaciones globales)
+- **Temas**: Material 3 / `CicloudTheme` y `ColorConstants`
+- **ID de Aplicación en Release**: `com.ghbcontrolasistencia.cicloud`
+
+## Estructura de Directorios Clave
+```text
+cicloud_movil/
+├── composeApp/                     # Código compartido y fuente principal
+│   └── src/
+│       ├── commonMain/kotlin/com/example/cicloud/
+│       │   ├── di/                 # Módulos de inyección de dependencias Koin
+│       │   ├── models/             # DTOs y modelos de datos (@Serializable)
+│       │   ├── network/            # Cliente Ktor y Endpoints.kt
+│       │   ├── repository/         # Capa de datos y repositorios
+│       │   ├── viewmodels/         # ViewModels de pantallas (StateFlow)
+│       │   ├── pages/ (o ui/)      # Pantallas y componentes @Composable
+│       │   ├── utils/              # Funciones de utilidad
+│       │   ├── App.kt              # Punto de entrada de Compose UI
+│       │   ├── CicloudTheme.kt     # Configuración del tema Material 3
+│       │   └── GlobalMessageManager.kt # Gestor de alertas globales
+│       ├── androidMain/            # Código nativo específico de Android
+│       └── iosMain/                # Código nativo específico de iOS
+├── iosApp/                         # Proyecto Xcode / Swift de entrada para iOS
+├── environment.dev.properties      # Variables de entorno en desarrollo
+└── environment.prod.properties     # Variables de entorno en producción
+```
+
+## Comandos Principales de CLI
+Ejecutar siempre desde la carpeta `cicloud_movil`:
+
+```shell
+# Compilar aplicación Android (Debug) en Windows
+.\gradlew.bat :composeApp:assembleDebug
+
+# Compilar aplicación Android (Debug) en macOS/Linux
+./gradlew :composeApp:assembleDebug
+
+# Limpiar build
+.\gradlew.bat clean
+```
+
+> Para iOS: abrir la carpeta `/iosApp` en Xcode y ejecutar en el simulador o dispositivo.

@@ -1,0 +1,53 @@
+---
+description: Reglas de arquitectura MVVM, capa de Repositorios e inyección Koin en cicloud_movil
+globs: composeApp/src/commonMain/kotlin/**/*.kt
+---
+
+# cicloud_movil — Arquitectura MVVM y Flujo de Datos
+
+## 1. Reglas de Capas y Responsabilidades
+
+El flujo de información en la aplicación móvil es estrictamente unidireccional:
+
+`Screen (@Composable)` ➔ `ViewModel` ➔ `Repository` ➔ `NetworkClient / Endpoints` ➔ `Backend API`
+
+### 1.1. Vistas / Pantallas (`pages` / `ui`)
+- Funciones marcadas con `@Composable`.
+- **PROHIBIDO** incluir lógica de negocio, llamadas de red directas o persistencia en los Composables.
+- Su única responsabilidad es dibujar la interfaz a partir del estado emitido por el `ViewModel` y enviar eventos (clics, cambios de texto) hacia él.
+
+### 1.2. ViewModels (`viewmodels`)
+- Controlan el estado de la pantalla (`StateFlow<T>` o `mutableStateOf`).
+- Manejan los estados de carga (`isLoading`), datos exitosos y mensajes de error.
+- **REGLA ESTRICTA**: El ViewModel nunca debe importar librerías de UI de Jetpack Compose (como widgets, modifiers o layouts de `androidx.compose.*`).
+- Delega el acceso a datos exclusivamente a los Repositorios.
+
+### 1.3. Repositorios (`repository`)
+- Es la fuente única de verdad para el ViewModel.
+- Decide si los datos se obtienen de la red (`network`) o de la caché local.
+- Maneja excepciones de red con `try-catch` y mapea respuestas a modelos de dominio.
+
+### 1.4. Modelos de Datos (`models`)
+- Todas las clases de datos recibidas o enviadas por HTTP deben estar anotadas con `@Serializable` de `kotlinx.serialization`:
+  ```kotlin
+  @Serializable
+  data class UsuarioDto(
+      val id: Int,
+      val nombre: String,
+      val token: String? = null
+  )
+  ```
+
+## 2. Inyección de Dependencias con Koin (`di`)
+- No instanciar repositorios o ViewModels manualmente con `new` / constructor directo.
+- Registrar dependencias en los módulos Koin ubicados en `com.example.cicloud.di`:
+  ```kotlin
+  val appModule = module {
+      // Repositorios como singletons o factories
+      single<AuthRepository> { AuthRepositoryImpl(get()) }
+
+      // ViewModels
+      factory { LoginViewModel(get()) }
+  }
+  ```
+- Inyectar en los Composables utilizando `koinViewModel<T>()` o a través de los helpers de Koin.

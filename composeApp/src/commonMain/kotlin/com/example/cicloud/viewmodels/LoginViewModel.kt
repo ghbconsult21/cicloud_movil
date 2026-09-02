@@ -20,7 +20,9 @@ data class LoginUiState(
     val instituciones: List<InstitucionDto> = emptyList(),
     val labelText: String = "Cargando instituciones...",
     val isLoading: Boolean = false,
-    val loginSuccess: Boolean = false
+    val loginSuccess: Boolean = false,
+    val requiresPasswordChange: Boolean = false,
+    val enteredPassword: String = ""
 )
 
 class LoginViewModel(private val repository: AuthRepository) : ViewModel() {
@@ -80,7 +82,7 @@ class LoginViewModel(private val repository: AuthRepository) : ViewModel() {
     fun login(usuario: String, clave: String) {
         viewModelScope.launch {
             // Reiniciamos el estado de éxito y activamos carga
-            uiState = uiState.copy(isLoading = true, loginSuccess = false)
+            uiState = uiState.copy(isLoading = true, loginSuccess = false, requiresPasswordChange = false)
             try {
                 val request = LoginRequest(
                     userName = usuario,
@@ -92,9 +94,20 @@ class LoginViewModel(private val repository: AuthRepository) : ViewModel() {
                 val response = repository.login(request)
                 
                 if (response != null) {
-                    // Guardamos el token en el SessionManager
+                    // Guardamos el token y usuario en el SessionManager
                     SessionManager.token = response.token
-                    uiState = uiState.copy(isLoading = false, loginSuccess = true)
+                    SessionManager.userName = usuario
+
+                    if (response.changedPassword == true) {
+                        uiState = uiState.copy(
+                            isLoading = false,
+                            requiresPasswordChange = true,
+                            enteredPassword = clave,
+                            loginSuccess = false
+                        )
+                    } else {
+                        uiState = uiState.copy(isLoading = false, loginSuccess = true)
+                    }
                 } else {
                     uiState = uiState.copy(isLoading = false)
                     // Si no hubo excepción pero la respuesta es nula, informamos
@@ -103,7 +116,7 @@ class LoginViewModel(private val repository: AuthRepository) : ViewModel() {
                     }
                 }
             } catch (e: Exception) {
-                uiState = uiState.copy(isLoading = false, loginSuccess = false)
+                uiState = uiState.copy(isLoading = false, loginSuccess = false, requiresPasswordChange = false)
                 // Si el Interceptor/process() no mostró ya una alerta, la mostramos nosotros
                 if (!GlobalMessageManager.showAlert) {
                     GlobalMessageManager.show(
@@ -114,5 +127,14 @@ class LoginViewModel(private val repository: AuthRepository) : ViewModel() {
                 }
             }
         }
+    }
+
+    fun onPasswordChangeSuccess() {
+        uiState = uiState.copy(requiresPasswordChange = false, loginSuccess = true)
+    }
+
+    fun onPasswordChangeCancelled() {
+        SessionManager.resetSession()
+        uiState = uiState.copy(requiresPasswordChange = false, loginSuccess = false)
     }
 }
