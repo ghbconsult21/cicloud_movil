@@ -12,6 +12,10 @@ object Endpoints {
 
     // Institución
     const val INSTITUCION_AUTOCOMPLETE = "/api/Institucion/autocomplete"
+
+    // Versión
+    const val VERSION_ANDROID = "/api/version/android"
+    const val VERSION_IOS = "/api/version/ios"
     
     // Función de ayuda para obtener la URL completa asegurando una sola barra
     fun getUrl(endpoint: String): String {

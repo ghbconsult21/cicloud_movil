@@ -48,6 +48,7 @@ val httpClient = HttpClient {
     install(HttpCallValidator) {
         validateResponse { response ->
             val statusCode = response.status.value
+
             when (statusCode) {
                 401 -> {
                     GlobalMessageManager.show("SESIÓN INVÁLIDA", "INICIE SESIÓN O INGRESE NUEVAMENTE", "warn")
@@ -59,6 +60,9 @@ val httpClient = HttpClient {
         }
         
         handleResponseExceptionWithRequest { cause, _ ->
+            // Si es por actualización, no mostramos el mensaje genérico de error de conexión
+            if (cause.message == "UPDATE_REQUIRED") return@handleResponseExceptionWithRequest
+
             val technicalError = cause.message ?: "Error desconocido"
             GlobalMessageManager.show("SIN CONEXIÓN", technicalError, "error") {
                 exitApp()
@@ -84,7 +88,13 @@ suspend inline fun <reified T> HttpResponse.process(): T? {
     }
 
     if (responseBody != null) {
-        handleBaseResponse(responseBody.success, responseBody.showAlert, responseBody.titleMessage, responseBody.textMessage)
+        handleBaseResponse(
+            responseBody.success,
+            responseBody.showAlert,
+            responseBody.titleMessage,
+            responseBody.textMessage,
+            responseBody.updateRequired
+        )
         return responseBody.content
     }
     
@@ -102,14 +112,38 @@ suspend fun HttpResponse.processBase(): Boolean {
     }
 
     if (responseBody != null) {
-        handleBaseResponse(responseBody.success, responseBody.showAlert, responseBody.titleMessage, responseBody.textMessage)
+        handleBaseResponse(
+            responseBody.success,
+            responseBody.showAlert,
+            responseBody.titleMessage,
+            responseBody.textMessage,
+            responseBody.updateRequired
+        )
         return responseBody.success
     }
     
     return false
 }
 
-fun handleBaseResponse(success: Boolean, showAlert: Boolean, title: String, text: String) {
+fun handleBaseResponse(
+    success: Boolean,
+    showAlert: Boolean,
+    title: String,
+    text: String,
+    updateRequired: Boolean = false
+) {
+    if (updateRequired) {
+        GlobalMessageManager.show(
+            title = "ACTUALIZACIÓN REQUERIDA",
+            message = text.ifBlank { "Debe actualizar la aplicación para continuar." },
+            severity = "warn",
+            dismissable = false
+        ) {
+            exitApp()
+        }
+        throw Exception("UPDATE_REQUIRED")
+    }
+
     if (showAlert) {
         val severity = when (title) {
             "Exito!" -> "success"
@@ -117,7 +151,7 @@ fun handleBaseResponse(success: Boolean, showAlert: Boolean, title: String, text
             "Error!" -> "error"
             else -> if (success) "success" else "error"
         }
-        GlobalMessageManager.show(title, text, severity)
+        GlobalMessageManager.show(title, text, severity, true)
     }
 
     if (!success) {

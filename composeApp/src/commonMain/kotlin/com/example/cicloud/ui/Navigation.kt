@@ -307,7 +307,11 @@ fun MainScaffold() {
     
     if (GlobalMessageManager.showAlert) {
         AlertDialog(
-            onDismissRequest = { GlobalMessageManager.dismiss() },
+            onDismissRequest = { 
+                if (GlobalMessageManager.isDismissable) {
+                    GlobalMessageManager.dismiss() 
+                }
+            },
             title = {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(

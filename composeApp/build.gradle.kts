@@ -78,10 +78,10 @@ android {
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "com.ghbconsultoriayservicios.cicloud"
+        applicationId = "com.ghbcontrolasistencia.cicloud"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 1
+        versionCode = 2
         versionName = "1.0"
     }
     packaging {
@@ -102,6 +102,9 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            ndk {
+                debugSymbolLevel = "full"
+            }
         }
     }
     compileOptions {
@@ -137,9 +140,11 @@ buildConfig {
     }
 
     val url = props.getProperty("BACKEND_URL") ?: "https://cicloudghb.com:8085"
-    val timeout = props.getProperty("TIMEOUT_SECONDS") ?: "30"
+    val timeout = "30"
     buildConfigField("String", "BACKEND_URL", "\"$url\"")
     buildConfigField("Long", "TIMEOUT_SECONDS", "${timeout}L")
+    buildConfigField("String", "VERSION_NAME", "\"1.0.0\"")
+    buildConfigField("Int", "VERSION_CODE", "1")
     println("--- DEBUG GRADLE: URL: $url ---")
 }
 

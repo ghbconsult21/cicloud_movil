@@ -21,6 +21,7 @@ object GlobalMessageManager {
     
     // Para alertas de confirmación
     var isConfirmation by mutableStateOf(false)
+    var isDismissable by mutableStateOf(true)
     var onConfirmAction: (() -> Unit)? = null
     var onCancelAction: (() -> Unit)? = null
 
@@ -48,11 +49,18 @@ object GlobalMessageManager {
         }
     }
 
-    fun show(title: String, message: String, severity: String = "info", onConfirm: (() -> Unit)? = null) {
+    fun show(
+        title: String, 
+        message: String, 
+        severity: String = "info", 
+        dismissable: Boolean = true,
+        onConfirm: (() -> Unit)? = null
+    ) {
         this.title = title
         this.message = message
         this.severity = severity
         this.isConfirmation = false
+        this.isDismissable = dismissable
         this.onConfirmAction = onConfirm
         this.onCancelAction = null
         this.showAlert = true
@@ -68,6 +76,7 @@ object GlobalMessageManager {
         this.message = message
         this.severity = "info"
         this.isConfirmation = true
+        this.isDismissable = true
         this.onConfirmAction = onConfirm
         this.onCancelAction = onCancel
         this.showAlert = true

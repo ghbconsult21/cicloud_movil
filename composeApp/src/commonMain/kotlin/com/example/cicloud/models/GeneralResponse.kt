@@ -8,6 +8,7 @@ data class GeneralResponse<T>(
     val titleMessage: String = "",
     val textMessage: String = "",
     val showAlert: Boolean = false,
+    val updateRequired: Boolean = false,
     val content: T? = null
 )
 
@@ -16,5 +17,6 @@ data class BaseResponse(
     val success: Boolean,
     val titleMessage: String = "",
     val textMessage: String = "",
-    val showAlert: Boolean = false
+    val showAlert: Boolean = false,
+    val updateRequired: Boolean = false
 )

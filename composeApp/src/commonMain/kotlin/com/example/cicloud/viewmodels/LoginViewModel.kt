@@ -31,7 +31,18 @@ class LoginViewModel(private val repository: AuthRepository) : ViewModel() {
     private var searchJob: Job? = null
 
     init {
+        checkAppVersion()
         loadInstituciones()
+    }
+
+    private fun checkAppVersion() {
+        viewModelScope.launch {
+            try {
+                repository.checkVersion()
+            } catch (e: Exception) {
+                // Si es UPDATE_REQUIRED, el manejador global ya lo gestionó.
+            }
+        }
     }
 
     /**

@@ -82,7 +82,7 @@ Cuando pidas ayuda a la IA o cuando la IA genere código, asegúrate de:
 
 ## 7. Configuración de Producción (Release)
 
-*   **applicationId:** El ID oficial para Google Play es `com.ghbconsultoriayservicios.cicloud`.
+*   **applicationId:** El ID oficial para Google Play es `com.ghbcontrolasistencia.cicloud`.
 *   **Ofuscación (R8/ProGuard):** Para evitar fallos en la serialización JSON tras la ofuscación, todos los modelos deben estar anotados con `@Serializable` y protegidos en `proguard-rules.pro`:
     ```proguard
     -keepclassmembers class com.example.cicloud.models.** { *; }
