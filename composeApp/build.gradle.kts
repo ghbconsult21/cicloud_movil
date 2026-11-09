@@ -77,12 +77,21 @@ android {
     namespace = "com.example.cicloud"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
+    signingConfigs {
+        create("release") {
+            storeFile = rootProject.file("key/play_store.jks")
+            storePassword = "@Flehuar@21"
+            keyAlias = "cicloud_ghb"
+            keyPassword = "@Flehuar@21"
+        }
+    }
+
     defaultConfig {
         applicationId = "com.ghbcontrolasistencia.cicloud"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 2
-        versionName = "1.0"
+        versionCode = 3
+        versionName = "1.1.0"
     }
     packaging {
         resources {
@@ -96,6 +105,7 @@ android {
             matchingFallbacks.add("release")
         }
         getByName("release") {
+            signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
@@ -143,11 +153,23 @@ buildConfig {
     val timeout = "30"
     buildConfigField("String", "BACKEND_URL", "\"$url\"")
     buildConfigField("Long", "TIMEOUT_SECONDS", "${timeout}L")
-    buildConfigField("String", "VERSION_NAME", "\"1.0\"")
-    buildConfigField("Int", "VERSION_CODE", "2")
+    buildConfigField("String", "VERSION_NAME", "\"1.1.0\"")
+    buildConfigField("Int", "VERSION_CODE", "3")
     println("--- DEBUG GRADLE: URL: $url ---")
 }
 
 dependencies {
     debugImplementation(libs.compose.uiTooling)
 }
+
+tasks.register<Copy>("copyReleaseOutputs") {
+    from(layout.buildDirectory.dir("outputs/bundle/release"))
+    from(layout.buildDirectory.dir("outputs/apk/release"))
+    into(projectDir.resolve("release"))
+    include("*.aab", "*.apk")
+}
+
+tasks.matching { it.name == "bundleRelease" || it.name == "assembleRelease" }.configureEach {
+    finalizedBy("copyReleaseOutputs")
+}
+
